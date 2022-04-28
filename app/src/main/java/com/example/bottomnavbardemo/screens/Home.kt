@@ -1,11 +1,8 @@
 package com.example.bottomnavbardemo.screens
 
 import android.content.Context
-import android.os.Bundle
 import android.preference.PreferenceManager
 import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -25,29 +22,23 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.bottomnavbardemo.MainScreen
 import com.example.bottomnavbardemo.api.ServiceBuilder
 import com.example.bottomnavbardemo.models.blackoutModel
-import com.example.bottomnavbardemo.ui.theme.BottomNavBarDemoTheme
-import com.example.bottomnavbardemo.ui.theme.Green
-import com.example.bottomnavbardemo.ui.theme.Red
 import com.example.bottomnavbardemo.ui.theme.ShimmerColorShades
-import com.example.loadshedding.models.todayGroupSchedule
+import com.example.loadshedding.models.DayGroupSchedule
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.time.LocalTime
+import java.util.*
 
 
-
-
-    @Composable
+@Composable
     fun HomeScreen() {
         Box(
             modifier = Modifier
@@ -65,35 +56,53 @@ import java.time.LocalTime
     fun TopSection(){
         val context = LocalContext.current
         val group = getGroupName(context)
+
         if (group != null) {
             Column{
-                val textPaddingModifier  = Modifier.padding(10.dp)
+                val textPaddingModifier  = Modifier.padding(5.dp)
                 Text(text = getGreeting(),
                     modifier = textPaddingModifier,
                     style= MaterialTheme.typography.h1
                 )
-                Text(text = "Today's Schedule",
-                    modifier = textPaddingModifier,
-                    style =  MaterialTheme.typography.h3
-                )
-                BlackoutListScreen(viewModel = BlackoutModel(group))
-                /*
-                LazyColumn {
 
-                    /**
-                    Lay down the Shimmer Animated item 5 time
-                    [repeat] is like a loop which executes the body
-                    according to the number specified
-                     */
-                    repeat(5) {
-                        item {
-                            ShimmerAnimation()
+                Row(modifier = Modifier
+                    .fillMaxWidth(5f)
+                    .padding(horizontal = 5.dp)) {
+                    Card(
+                        modifier = Modifier
+                            .padding(horizontal = 5.dp, vertical = 5.dp)
+                            .weight(2f)
+                        ,
+                        elevation = 2.dp,
+                        shape = RoundedCornerShape(corner = CornerSize(10.dp))
+                    ) {
+                        Column {
+                            Text(text = "Today",
+                                modifier = Modifier.padding(horizontal = 8.dp),
+                                style =  MaterialTheme.typography.h3
+                            )
+                            BlackoutListScreen(viewModel = BlackoutModel(group))
+                        }
 
+                    }
+                    Card(
+                        modifier = Modifier
+                            .padding(horizontal = 5.dp, vertical = 5.dp)
+                            .weight(2f)
+                        ,
+                        elevation = 2.dp,
+                        backgroundColor = Color.White,
+                        shape = RoundedCornerShape(corner = CornerSize(10.dp))
+                    ){
+                        Column {
+                            Text(text = "Tomorrow",
+                                modifier = Modifier.padding(horizontal = 8.dp),
+                                style =  MaterialTheme.typography.h3
+                            )
+                            TomorrowBlackoutListScreen(viewModel = TomorrowBlackoutModel(group,context))
                         }
                     }
                 }
-                 */
-
             }
         }
     }
@@ -103,11 +112,31 @@ import java.time.LocalTime
         // pass the view model in this form for convenient testing
         viewModel: BlackoutModel
     ) {
+        val context = LocalContext.current
+
+        //Toast.makeText(context, day.toString(), Toast.LENGTH_SHORT).show()
         // A surface container using the 'background' color from the theme
         Surface(color = MaterialTheme.colors.background) {
             BlackoutList(viewModel.blackoutCards)
         }
     }
+
+    @Composable
+    fun TomorrowBlackoutListScreen(
+    // pass the view model in this form for convenient testing
+     viewModel: TomorrowBlackoutModel
+    ) {
+    val context = LocalContext.current
+
+    //Toast.makeText(context, day.toString(), Toast.LENGTH_SHORT).show()
+    // A surface container using the 'background' color from the theme
+    Surface(color = MaterialTheme.colors.background) {
+        BlackoutList(viewModel.blackoutCards)
+    }
+}
+
+
+
 
     @Composable
     fun BlackoutList(blackouts: SnapshotStateList<blackoutModel>) {
@@ -120,43 +149,28 @@ import java.time.LocalTime
 
     @Composable
     fun BlackoutCard(blackout: blackoutModel) {
-        Card(
+        Column(
             modifier = Modifier
                 .padding(horizontal = 8.dp, vertical = 8.dp)
                 .fillMaxWidth()
-                .height(70.dp),
-            elevation = 2.dp,
-            backgroundColor = Color.White,
-            shape = RoundedCornerShape(corner = CornerSize(10.dp))
         ) {
             Row(modifier = Modifier.fillMaxSize(),horizontalArrangement = Arrangement.SpaceAround,verticalAlignment = Alignment.CenterVertically) {
-                Card(
-                    modifier = Modifier.height(55.dp),
-                    elevation = 4.dp,
-                    backgroundColor = Red
-                ){
                     Row(horizontalArrangement = Arrangement.SpaceAround,verticalAlignment = Alignment.CenterVertically) {
                         blackout.from?.let { Text(text = it, modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp) ,style =  MaterialTheme.typography.h4) }
                     }
-                }
-                Text(text = "to",style =  MaterialTheme.typography.h4)
-                Card(
-                    modifier = Modifier.height(55.dp),
-                    elevation = 4.dp,
-                    backgroundColor = Green
-                ){
+
+                    Text(text = "to",style =  MaterialTheme.typography.h4)
+
                     Row(horizontalArrangement = Arrangement.SpaceAround,verticalAlignment = Alignment.CenterVertically) {
                         blackout.to?.let { Text(text = it, modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp) ,style =  MaterialTheme.typography.h4) }
                     }
-
-                }
 
             }
         }
 
     }
 
-    class BlackoutModel(group:String) : ViewModel() {
+class BlackoutModel(group:String) : ViewModel() {
         val blackoutCards = mutableStateListOf<blackoutModel>()
 
         init{
@@ -165,16 +179,16 @@ import java.time.LocalTime
         private fun getTodayBlackouts(group:String) {
             viewModelScope
                 .launch {
-                    val requestCall : Call<todayGroupSchedule>? = group?.let {
+                    val requestCall : Call<DayGroupSchedule>? = group?.let {
                         ServiceBuilder.api.getTodayGroupSchedule(
                             it
                         )
                     }
                     if (requestCall != null) {
-                        requestCall.enqueue(object: Callback<todayGroupSchedule> {
+                        requestCall.enqueue(object: Callback<DayGroupSchedule> {
                             override fun onResponse(
-                                call: Call<todayGroupSchedule>,
-                                response: Response<todayGroupSchedule>
+                                call: Call<DayGroupSchedule>,
+                                response: Response<DayGroupSchedule>
                             ) {
 
                                 val blackoutTime = response.body()?.time
@@ -184,7 +198,7 @@ import java.time.LocalTime
 
                                 }
                             }
-                            override fun onFailure(call: Call<todayGroupSchedule>, t: Throwable) {
+                            override fun onFailure(call: Call<DayGroupSchedule>, t: Throwable) {
                                 //Toast.makeText(context, "an error occured while fetching today's schedule" , Toast.LENGTH_SHORT).show()
                             }
                         })
@@ -193,10 +207,42 @@ import java.time.LocalTime
         }
     }
 
+class TomorrowBlackoutModel(group:String,context:Context) : ViewModel() {
+    val blackoutCards = mutableStateListOf<blackoutModel>()
 
+    init{
+        getTomorrowBlackout(group,context)
+    }
+    private fun getTomorrowBlackout(group:String,context:Context) {
+        viewModelScope
+            .launch {
+                val calendar: Calendar = Calendar.getInstance()
+                val day: Int = calendar.get(Calendar.DAY_OF_WEEK)-1
+                Toast.makeText(context, day.toString() , Toast.LENGTH_SHORT).show()
+                val requestCall : Call<DayGroupSchedule>? = ServiceBuilder.api.getDayGroupSchedule(day,group.uppercase())
+                if (requestCall != null) {
+                    requestCall.enqueue(object: Callback<DayGroupSchedule> {
+                        override fun onResponse(
+                            call: Call<DayGroupSchedule>,
+                            response: Response<DayGroupSchedule>
+                        ) {
 
+                            val blackoutTime = response.body()?.time
+                            Toast.makeText(context, response.body().toString() , Toast.LENGTH_SHORT).show()
+                            if (blackoutTime != null) {
+                                blackoutCards.clear()
+                                blackoutCards.addAll(blackoutTime.times)
 
-
+                            }
+                        }
+                        override fun onFailure(call: Call<DayGroupSchedule>, t: Throwable) {
+                            Toast.makeText(context, "an error occured while fetching tomorrow schedule" , Toast.LENGTH_SHORT).show()
+                        }
+                    })
+                }
+            }
+    }
+}
 
 
 

@@ -3,7 +3,6 @@ package com.example.bottomnavbardemo.api
 
 import com.example.loadshedding.models.*
 import retrofit2.Call
-import retrofit2.Response
 import retrofit2.http.*
 
 interface RestApi {
@@ -18,7 +17,10 @@ interface RestApi {
     fun getGroupSchedule(@Path("name")group:String): Call<groupSchedule>
 
     @GET("/schedule/today/{name}")
-    fun getTodayGroupSchedule(@Path("name")group:String): Call<todayGroupSchedule>
+    fun getTodayGroupSchedule(@Path("name")group:String): Call<DayGroupSchedule>
+
+    @GET("/schedule/day")
+    fun getDayGroupSchedule(@Query("d")day:Int,@Query("g")group:String): Call<DayGroupSchedule>
 
     @GET("/all/schedule/")
     fun getAllSchedule(): Call<allSchedule>

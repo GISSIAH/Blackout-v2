@@ -76,7 +76,23 @@ class Welcome : ComponentActivity() {
                         }
                     }
 
+/*
+                    Button(onClick = {
+                        //setUserPreferences(context)
+                        val intent = Intent(this@Welcome, MainActivity::class.java)
+                        startActivity(intent)
+                    },
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = Green,
+                            contentColor = White
+                        ),)
+                    {
+                        Text(text = "Skip")
+                    }
 
+
+
+ */
                 }
 
             }
