@@ -1,8 +1,11 @@
 package com.example.bottomnavbardemo.screens
 
 import android.content.Context
+import android.os.Bundle
 import android.preference.PreferenceManager
 import android.widget.Toast
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -12,8 +15,10 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -23,120 +28,200 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.bottomnavbardemo.MainScreen
 import com.example.bottomnavbardemo.api.ServiceBuilder
 import com.example.bottomnavbardemo.models.blackoutModel
+import com.example.bottomnavbardemo.ui.theme.BottomNavBarDemoTheme
 import com.example.bottomnavbardemo.ui.theme.Green
 import com.example.bottomnavbardemo.ui.theme.Red
 import com.example.bottomnavbardemo.ui.theme.ShimmerColorShades
 import com.example.loadshedding.models.todayGroupSchedule
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.time.LocalTime
 
-var scheduleList :MutableList<blackoutModel> = mutableListOf()
 
 
 
-@Composable
-fun HomeScreen() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
+    @Composable
+    fun HomeScreen() {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            TopSection()
+        }
+    }
+    @Composable
+    @Preview
+    fun HomeScreenPreview() {
         TopSection()
     }
-}
-
-@Composable
-@Preview
-fun HomeScreenPreview() {
-    TopSection()
-}
-
-@Composable
-fun TopSection(){
-
-    val context = LocalContext.current
-    val group = getGroupName(context)
-    if (group != null) {
-
-        LoadTodaysSchedule(group,context)
-        Toast.makeText(context, scheduleList.toString() , Toast.LENGTH_SHORT).show()
-        Column{
-            val textPaddingModifier  = Modifier.padding(10.dp)
-            Text(text = getGreeting(),
-                modifier = textPaddingModifier,
-                style= MaterialTheme.typography.h1
-            )
-            Text(text = "Today's Schedule",
-                modifier = textPaddingModifier,
-                style =  MaterialTheme.typography.h3
+    @Composable
+    fun TopSection(){
+        val context = LocalContext.current
+        val group = getGroupName(context)
+        if (group != null) {
+            Column{
+                val textPaddingModifier  = Modifier.padding(10.dp)
+                Text(text = getGreeting(),
+                    modifier = textPaddingModifier,
+                    style= MaterialTheme.typography.h1
                 )
-            LazyColumn(modifier = Modifier.padding(2.dp)){
-                items(scheduleList){ blackout ->
-                    BlackoutCard(blackout)
-                }
-            }
-            /*
-            LazyColumn {
+                Text(text = "Today's Schedule",
+                    modifier = textPaddingModifier,
+                    style =  MaterialTheme.typography.h3
+                )
+                BlackoutListScreen(viewModel = BlackoutModel(group))
+                /*
+                LazyColumn {
 
-                /**
-                Lay down the Shimmer Animated item 5 time
-                [repeat] is like a loop which executes the body
-                according to the number specified
-                 */
-                repeat(5) {
-                    item {
-                        ShimmerAnimation()
+                    /**
+                    Lay down the Shimmer Animated item 5 time
+                    [repeat] is like a loop which executes the body
+                    according to the number specified
+                     */
+                    repeat(5) {
+                        item {
+                            ShimmerAnimation()
 
+                        }
                     }
                 }
+                 */
+
             }
-
-
-             */
-
         }
     }
 
-    
-    
-}
-
-
-
-fun LoadTodaysSchedule(group:String,context: Context){
-    //var blackoutState_txt by remember { mutableStateOf("") }
-    //Toast.makeText(context, group , Toast.LENGTH_SHORT).show()
-
-
-    val requestCall : Call<todayGroupSchedule>? = group?.let {
-        ServiceBuilder.api.getTodayGroupSchedule(
-            it
-        )
+    @Composable
+    fun BlackoutListScreen(
+        // pass the view model in this form for convenient testing
+        viewModel: BlackoutModel
+    ) {
+        // A surface container using the 'background' color from the theme
+        Surface(color = MaterialTheme.colors.background) {
+            BlackoutList(viewModel.blackoutCards)
+        }
     }
-    if (requestCall != null) {
-        requestCall.enqueue(object: Callback<todayGroupSchedule> {
-            override fun onResponse(
-                call: Call<todayGroupSchedule>,
-                response: Response<todayGroupSchedule>
-            ) {
 
-                val blackoutTime = response.body()?.time
-                if (blackoutTime != null) {
-                    val firstTime = blackoutTime.times[0].from
+    @Composable
+    fun BlackoutList(blackouts: SnapshotStateList<blackoutModel>) {
+        LazyColumn(modifier = Modifier.padding(2.dp)){
+            items(blackouts){ blackout ->
+                BlackoutCard(blackout)
+            }
+        }
+    }
 
-                    scheduleList = blackoutTime.times as MutableList<blackoutModel>
-                    //blackoutState_txt=getBlackoutState(blackoutTime)
+    @Composable
+    fun BlackoutCard(blackout: blackoutModel) {
+        Card(
+            modifier = Modifier
+                .padding(horizontal = 8.dp, vertical = 8.dp)
+                .fillMaxWidth()
+                .height(70.dp),
+            elevation = 2.dp,
+            backgroundColor = Color.White,
+            shape = RoundedCornerShape(corner = CornerSize(10.dp))
+        ) {
+            Row(modifier = Modifier.fillMaxSize(),horizontalArrangement = Arrangement.SpaceAround,verticalAlignment = Alignment.CenterVertically) {
+                Card(
+                    modifier = Modifier.height(55.dp),
+                    elevation = 4.dp,
+                    backgroundColor = Red
+                ){
+                    Row(horizontalArrangement = Arrangement.SpaceAround,verticalAlignment = Alignment.CenterVertically) {
+                        blackout.from?.let { Text(text = it, modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp) ,style =  MaterialTheme.typography.h4) }
+                    }
                 }
+                Text(text = "to",style =  MaterialTheme.typography.h4)
+                Card(
+                    modifier = Modifier.height(55.dp),
+                    elevation = 4.dp,
+                    backgroundColor = Green
+                ){
+                    Row(horizontalArrangement = Arrangement.SpaceAround,verticalAlignment = Alignment.CenterVertically) {
+                        blackout.to?.let { Text(text = it, modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp) ,style =  MaterialTheme.typography.h4) }
+                    }
+
+                }
+
             }
-            override fun onFailure(call: Call<todayGroupSchedule>, t: Throwable) {
-                Toast.makeText(context, "an error occured while fetching today's schedule" , Toast.LENGTH_SHORT).show()
-            }
-        })
+        }
+
     }
-}
+
+    class BlackoutModel(group:String) : ViewModel() {
+        val blackoutCards = mutableStateListOf<blackoutModel>()
+
+        init{
+            getTodayBlackouts(group)
+        }
+        private fun getTodayBlackouts(group:String) {
+            viewModelScope
+                .launch {
+                    val requestCall : Call<todayGroupSchedule>? = group?.let {
+                        ServiceBuilder.api.getTodayGroupSchedule(
+                            it
+                        )
+                    }
+                    if (requestCall != null) {
+                        requestCall.enqueue(object: Callback<todayGroupSchedule> {
+                            override fun onResponse(
+                                call: Call<todayGroupSchedule>,
+                                response: Response<todayGroupSchedule>
+                            ) {
+
+                                val blackoutTime = response.body()?.time
+                                if (blackoutTime != null) {
+                                    blackoutCards.clear()
+                                    blackoutCards.addAll(blackoutTime.times)
+
+                                }
+                            }
+                            override fun onFailure(call: Call<todayGroupSchedule>, t: Throwable) {
+                                //Toast.makeText(context, "an error occured while fetching today's schedule" , Toast.LENGTH_SHORT).show()
+                            }
+                        })
+                    }
+                }
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 fun getGreeting():String{
     val now: LocalTime = LocalTime.now()
 
@@ -174,46 +259,6 @@ fun getBlackoutState(blackoutTime:String):String{
 
     return ""
 }
-
-@Composable
-fun BlackoutCard(cardSchedule:blackoutModel){
-    Card(
-        modifier = Modifier
-            .padding(horizontal = 8.dp, vertical = 8.dp)
-            .fillMaxWidth()
-            .height(70.dp),
-        elevation = 2.dp,
-        backgroundColor = Color.White,
-        shape = RoundedCornerShape(corner = CornerSize(10.dp))
-    ) {
-        Row(modifier = Modifier.fillMaxSize(),horizontalArrangement = Arrangement.SpaceAround,verticalAlignment = Alignment.CenterVertically) {
-            Card(
-                modifier = Modifier.height(55.dp),
-                elevation = 4.dp,
-                backgroundColor = Red
-            ){
-                Row(horizontalArrangement = Arrangement.SpaceAround,verticalAlignment = Alignment.CenterVertically) {
-                    cardSchedule.from?.let { Text(text = it, modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp) ,style =  MaterialTheme.typography.h4) }
-                }
-            }
-            Text(text = "to",style =  MaterialTheme.typography.h4)
-            Card(
-                modifier = Modifier.height(55.dp),
-                elevation = 4.dp,
-                backgroundColor = Green
-            ){
-                Row(horizontalArrangement = Arrangement.SpaceAround,verticalAlignment = Alignment.CenterVertically) {
-                    cardSchedule.to?.let { Text(text = it, modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp) ,style =  MaterialTheme.typography.h4) }
-                }
-
-            }
-
-        }
-    }
-
-
-}
-
 
 @Composable
 fun ShimmerItem(
@@ -282,4 +327,8 @@ fun ShimmerAnimation(
 
     ShimmerItem(brush = brush)
 }
+
+
+
+
 
