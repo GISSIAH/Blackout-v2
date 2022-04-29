@@ -16,13 +16,13 @@ val Typography = Typography(
     ),
     h5= TextStyle(
         fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Bold,
-        fontSize = 24.sp
+        fontWeight = FontWeight.Light,
+        fontSize = 18.sp
     ),
     h3 = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
-        fontSize = 24.sp,
+        fontSize = 22.sp,
         color = Gray500
 ),
     h4 = TextStyle(

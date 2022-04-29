@@ -28,7 +28,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bottomnavbardemo.api.ServiceBuilder
 import com.example.bottomnavbardemo.models.blackoutModel
+import com.example.bottomnavbardemo.ui.theme.Red
 import com.example.bottomnavbardemo.ui.theme.ShimmerColorShades
+import com.example.bottomnavbardemo.ui.theme.lightRed
 import com.example.loadshedding.models.DayGroupSchedule
 import kotlinx.coroutines.launch
 import retrofit2.Call
@@ -55,10 +57,10 @@ import java.util.*
     @Composable
     fun TopSection(){
         val context = LocalContext.current
-        val group = getGroupName(context)
+        val group = "C" //getGroupName(context)
 
         if (group != null) {
-            Column{
+            Column(modifier = Modifier.padding(vertical = 65.dp)){
                 val textPaddingModifier  = Modifier.padding(5.dp)
                 Text(text = getGreeting(),
                     modifier = textPaddingModifier,
@@ -67,19 +69,20 @@ import java.util.*
 
                 Row(modifier = Modifier
                     .fillMaxWidth(5f)
-                    .padding(horizontal = 5.dp)) {
+                    .padding(horizontal = 5.dp,vertical = 20.dp)) {
                     Card(
                         modifier = Modifier
                             .padding(horizontal = 5.dp, vertical = 5.dp)
+                            .height(120.dp)
                             .weight(2f)
                         ,
-                        elevation = 2.dp,
-                        shape = RoundedCornerShape(corner = CornerSize(10.dp))
+                        elevation = 8.dp,
+                        shape = RoundedCornerShape(corner = CornerSize(16.dp))
                     ) {
-                        Column {
+                        Column(modifier = Modifier.background(Red)) {
                             Text(text = "Today",
-                                modifier = Modifier.padding(horizontal = 8.dp),
-                                style =  MaterialTheme.typography.h3
+                                modifier = Modifier.padding(horizontal = 8.dp).background(Red),
+                                style =  MaterialTheme.typography.h3, color = Color.White
                             )
                             BlackoutListScreen(viewModel = BlackoutModel(group))
                         }
@@ -88,16 +91,18 @@ import java.util.*
                     Card(
                         modifier = Modifier
                             .padding(horizontal = 5.dp, vertical = 5.dp)
+                            .height(120.dp)
                             .weight(2f)
+
                         ,
-                        elevation = 2.dp,
+                        elevation = 4.dp,
                         backgroundColor = Color.White,
-                        shape = RoundedCornerShape(corner = CornerSize(10.dp))
+                        shape = RoundedCornerShape(corner = CornerSize(16.dp))
                     ){
-                        Column {
+                        Column(modifier = Modifier.background(lightRed)) {
                             Text(text = "Tomorrow",
-                                modifier = Modifier.padding(horizontal = 8.dp),
-                                style =  MaterialTheme.typography.h3
+                                modifier = Modifier.padding(horizontal = 8.dp).background(lightRed),
+                                style =  MaterialTheme.typography.h3, color = Color.Black
                             )
                             TomorrowBlackoutListScreen(viewModel = TomorrowBlackoutModel(group,context))
                         }
@@ -116,8 +121,8 @@ import java.util.*
 
         //Toast.makeText(context, day.toString(), Toast.LENGTH_SHORT).show()
         // A surface container using the 'background' color from the theme
-        Surface(color = MaterialTheme.colors.background) {
-            BlackoutList(viewModel.blackoutCards)
+        Surface(color = Red) {
+            BlackoutList(viewModel.blackoutCards,Color.White)
         }
     }
 
@@ -130,8 +135,8 @@ import java.util.*
 
     //Toast.makeText(context, day.toString(), Toast.LENGTH_SHORT).show()
     // A surface container using the 'background' color from the theme
-    Surface(color = MaterialTheme.colors.background) {
-        BlackoutList(viewModel.blackoutCards)
+    Surface(color = lightRed) {
+        BlackoutList(viewModel.blackoutCards, Color.Black)
     }
 }
 
@@ -139,30 +144,30 @@ import java.util.*
 
 
     @Composable
-    fun BlackoutList(blackouts: SnapshotStateList<blackoutModel>) {
+    fun BlackoutList(blackouts: SnapshotStateList<blackoutModel>,textColor:Color) {
         LazyColumn(modifier = Modifier.padding(2.dp)){
             items(blackouts){ blackout ->
-                BlackoutCard(blackout)
+                BlackoutCard(blackout,textColor)
             }
         }
     }
 
     @Composable
-    fun BlackoutCard(blackout: blackoutModel) {
+    fun BlackoutCard(blackout: blackoutModel,textColor:Color) {
         Column(
             modifier = Modifier
-                .padding(horizontal = 8.dp, vertical = 8.dp)
+                .padding(horizontal = 8.dp, vertical = 0.dp)
                 .fillMaxWidth()
         ) {
             Row(modifier = Modifier.fillMaxSize(),horizontalArrangement = Arrangement.SpaceAround,verticalAlignment = Alignment.CenterVertically) {
                     Row(horizontalArrangement = Arrangement.SpaceAround,verticalAlignment = Alignment.CenterVertically) {
-                        blackout.from?.let { Text(text = it, modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp) ,style =  MaterialTheme.typography.h4) }
+                        blackout.from?.let { Text(text = it, modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp) ,style =  MaterialTheme.typography.h5, color = textColor) }
                     }
 
-                    Text(text = "to",style =  MaterialTheme.typography.h4)
+                    Text(text = "to",style =  MaterialTheme.typography.h5, color = textColor)
 
                     Row(horizontalArrangement = Arrangement.SpaceAround,verticalAlignment = Alignment.CenterVertically) {
-                        blackout.to?.let { Text(text = it, modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp) ,style =  MaterialTheme.typography.h4) }
+                        blackout.to?.let { Text(text = it, modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp) ,style =  MaterialTheme.typography.h5, color = textColor) }
                     }
 
             }
@@ -243,30 +248,6 @@ class TomorrowBlackoutModel(group:String,context:Context) : ViewModel() {
             }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 fun getGreeting():String{
     val now: LocalTime = LocalTime.now()
