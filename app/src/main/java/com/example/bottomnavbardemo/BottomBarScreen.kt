@@ -1,10 +1,10 @@
 package com.example.bottomnavbardemo
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material.icons.outlined.Today
 import androidx.compose.ui.graphics.vector.ImageVector
 
 sealed class BottomBarScreen(
@@ -15,13 +15,21 @@ sealed class BottomBarScreen(
     object Home : BottomBarScreen(
         route = "home",
         title = "Home",
-        icon = Icons.Default.Home
+        icon = Icons.Outlined.Home
     )
+
+    object Full : BottomBarScreen(
+        route = "full",
+        title = "Schedule",
+        icon = Icons.Outlined.Today
+    )
+
+
 
     object Map : BottomBarScreen(
         route = "map",
-        title = "Map",
-        icon = Icons.Filled.Email
+        title = "Search",
+        icon = Icons.Outlined.Search
     )
 
     object Settings : BottomBarScreen(

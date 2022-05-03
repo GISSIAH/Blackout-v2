@@ -60,7 +60,7 @@ import java.util.*
         val group = "C" //getGroupName(context)
 
         if (group != null) {
-            Column(modifier = Modifier.padding(vertical = 65.dp)){
+            Column(modifier = Modifier.padding(vertical = 50.dp)){
                 val textPaddingModifier  = Modifier.padding(5.dp)
                 Text(text = getGreeting(),
                     modifier = textPaddingModifier,

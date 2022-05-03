@@ -19,6 +19,11 @@ val Typography = Typography(
         fontWeight = FontWeight.Light,
         fontSize = 18.sp
     ),
+    h6= TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Light,
+        fontSize = 14.sp
+    ),
     h3 = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
@@ -36,6 +41,12 @@ val Typography = Typography(
         fontWeight = FontWeight.SemiBold,
         fontSize = 36.sp,
         color = Gray500
+    ),
+    h2 = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 24.sp,
+        color = Gray700
     )
 
     /* Other default text styles to override

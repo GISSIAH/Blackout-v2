@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.bottomnavbardemo.screens.FullScreen
 import com.example.bottomnavbardemo.screens.HomeScreen
 
 import com.example.bottomnavbardemo.screens.MapScreen
@@ -17,6 +18,9 @@ fun BottomNavGraph(navController: NavHostController) {
     ) {
         composable(route = BottomBarScreen.Home.route) {
             HomeScreen()
+        }
+        composable(route = BottomBarScreen.Full.route) {
+            FullScreen()
         }
         composable(route = BottomBarScreen.Map.route) {
             MapScreen()
