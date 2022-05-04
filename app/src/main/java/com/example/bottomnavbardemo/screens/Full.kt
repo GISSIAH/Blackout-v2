@@ -1,6 +1,8 @@
 package com.example.bottomnavbardemo.screens
 
 
+import android.content.Context
+import android.preference.PreferenceManager
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -50,6 +52,9 @@ fun FullScreen() {
         }
 
         WeekListScreen()
+
+
+
     }
 }
 @Composable
@@ -85,7 +90,9 @@ fun WeekListScreen() {
 
 @Composable
 fun WeekList(weekList:List<WeekDay>) {
+
     val context = LocalContext.current
+    val group = getGroupName(context)
     val calendar: Calendar = Calendar.getInstance()
     val day: Int = calendar.get(Calendar.DAY_OF_WEEK)-2
     val option1 = WeekDay(day,getDayName(day))
@@ -109,6 +116,11 @@ fun WeekList(weekList:List<WeekDay>) {
                 }
             }
         }
+    Column(modifier = Modifier.padding(vertical = 25.dp)) {
+        group?.let { DayScheduleModel(it,selectedOption.day) }?.let { DayBlackoutScreen(viewModel = it) }
+    }
+
+
     }
 
 }
@@ -159,6 +171,94 @@ fun getDayName(day: Int): String {
 
 
 
+class DayScheduleModel(group:String,day:Int) : ViewModel() {
+    val blackoutCards = mutableStateListOf<blackoutModel>()
+
+    init{
+        getDayBlackouts(day,group)
+    }
+    private fun getDayBlackouts(day:Int,group:String) {
+        viewModelScope
+            .launch {
+                val requestCall : Call<DayGroupSchedule>? = ServiceBuilder.api.getDayGroupSchedule(day,group.uppercase())
+                if (requestCall != null) {
+                    requestCall.enqueue(object: Callback<DayGroupSchedule> {
+                        override fun onResponse(
+                            call: Call<DayGroupSchedule>,
+                            response: Response<DayGroupSchedule>
+                        ) {
+
+                            val blackoutTime = response.body()?.time
+                            //Toast.makeText(context, response.body().toString() , Toast.LENGTH_SHORT).show()
+                            if (blackoutTime != null) {
+                                blackoutCards.clear()
+                                blackoutCards.addAll(blackoutTime.times)
+
+                            }
+                        }
+                        override fun onFailure(call: Call<DayGroupSchedule>, t: Throwable) {
+                            //Toast.makeText(context, "an error occured while fetching tomorrow schedule" , Toast.LENGTH_SHORT).show()
+                        }
+                    })
+                }
+            }
+    }
+}
+
+@Composable
+fun DayBlackoutScreen(
+    // pass the view model in this form for convenient testing
+    viewModel: DayScheduleModel
+) {
+    val context = LocalContext.current
+
+    //Toast.makeText(context, day.toString(), Toast.LENGTH_SHORT).show()
+    // A surface container using the 'background' color from the theme
+    Surface() {
+        DayScheduleList(viewModel.blackoutCards)
+    }
+}
 
 
+
+
+@Composable
+fun DayScheduleList(blackouts: SnapshotStateList<blackoutModel>) {
+    LazyColumn(modifier = Modifier.padding(2.dp).fillMaxWidth().fillMaxHeight()){
+        items(blackouts){ blackout ->
+            DayCard(blackout)
+        }
+    }
+}
+
+
+@Composable
+fun DayCard(blackout:blackoutModel){
+    Card(
+        modifier = Modifier
+            .padding(horizontal = 5.dp, vertical = 25.dp)
+            .fillMaxWidth()
+            .height(100.dp)
+
+        ,
+        elevation = 8.dp,
+        shape = RoundedCornerShape(corner = CornerSize(4.dp))
+    ) {
+        Row(modifier = Modifier.padding(horizontal = 5.dp),horizontalArrangement = Arrangement.SpaceAround,verticalAlignment = Alignment.CenterVertically) {
+            Column(verticalArrangement = Arrangement.SpaceBetween) {
+                Text(text = "From",style = MaterialTheme.typography.body1)
+                blackout.from?.let { Text(text = it,style = MaterialTheme.typography.h5) }
+            }
+            Column(verticalArrangement = Arrangement.SpaceBetween) {
+                Text(text = "To",style = MaterialTheme.typography.body1)
+                blackout.to?.let { Text(text = it,style = MaterialTheme.typography.h5) }
+            }
+            Column(verticalArrangement = Arrangement.SpaceBetween) {
+                Text(text = "Duration",style = MaterialTheme.typography.body1)
+                blackout.duration?.let { Text(text = it.toString(),style = MaterialTheme.typography.h5) }
+            }
+
+        }
+    }
+}
 
