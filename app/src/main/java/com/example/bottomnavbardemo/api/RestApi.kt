@@ -13,8 +13,8 @@ interface RestApi {
     @GET("/user/locate")
     fun getUserLocationGroup(@Query("lat")lat : Float,@Query("lng")lng : Float ):  Call<userLocationGroup>
 
-    @GET("/area/schedule/{name}")
-    fun getGroupSchedule(@Path("name")group:String): Call<groupSchedule>
+    @GET("/area/schedule/")
+    fun getAreaSchedule(@Query("name")name:String,@Query("day")day:Int): Call<DayGroupSchedule>
 
     @GET("/schedule/today/{name}")
     fun getTodayGroupSchedule(@Path("name")group:String): Call<DayGroupSchedule>
