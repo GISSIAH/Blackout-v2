@@ -57,7 +57,7 @@ import java.util.*
     @Composable
     fun TopSection(){
         val context = LocalContext.current
-        val group = getGroupName(context)
+        val group =  getGroupName(context)
 
         if (group != null) {
             Column(modifier = Modifier.padding(vertical = 50.dp)){

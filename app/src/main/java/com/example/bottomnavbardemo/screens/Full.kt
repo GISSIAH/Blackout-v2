@@ -28,6 +28,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.bottomnavbardemo.api.ServiceBuilder
 import com.example.bottomnavbardemo.models.WeekDay
 import com.example.bottomnavbardemo.models.blackoutModel
+import com.example.bottomnavbardemo.ui.theme.Gray500
+import com.example.bottomnavbardemo.ui.theme.Gray700
 import com.example.bottomnavbardemo.ui.theme.Red
 import com.example.bottomnavbardemo.ui.theme.lightRed
 import com.example.loadshedding.models.DayGroupSchedule
@@ -36,19 +38,36 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.util.*
+import org.joda.time.DateTime
+import java.text.DateFormatSymbols
 
 
 @Composable
 fun FullScreen() {
+    val cal = Calendar.getInstance()
+    val year = cal.get(Calendar.YEAR)
+    val week_no = cal.get(Calendar.WEEK_OF_YEAR)
+
+    val week_range = getWeekRange(year,week_no)
+    val low_date = "${week_range?.first?.dayOfMonth} ${DateFormatSymbols().getMonths()[week_range?.first?.monthOfYear?.minus(1)!!]}"
+
+    val high_date = "${week_range?.second?.dayOfMonth} ${DateFormatSymbols().getMonths()[week_range?.second?.monthOfYear?.minus(1)!!]}"
     Column(
         modifier = Modifier
-            .padding(horizontal = 2.dp, vertical = 50.dp)
+            .padding(horizontal = 2.dp, vertical = 35.dp)
 
     ) {
         Row(modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 10.dp),horizontalArrangement = Arrangement.Center) {
             Text(text = "This week",style = MaterialTheme.typography.h2)
+        }
+        Row(modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 10.dp),horizontalArrangement = Arrangement.Center) {
+            if (week_range != null) {
+                Text(text = "${low_date} to ${high_date}",style = MaterialTheme.typography.h5,color = Gray700)
+            }
         }
 
         WeekListScreen()
@@ -70,6 +89,7 @@ fun FullScreenPreview() {
 
 @Composable
 fun WeekListScreen() {
+
     val weekList = listOf<WeekDay>(
         WeekDay(0,"MON"),
         WeekDay(1,"TUE"),
@@ -99,7 +119,7 @@ fun WeekList(weekList:List<WeekDay>) {
     var selectedOption by remember { mutableStateOf(option1)}
     Column() {
         LazyRow(modifier = Modifier
-            .padding(horizontal = 8.dp)
+            .padding(horizontal = 8.dp, vertical = 10.dp)
             .fillMaxWidth(),horizontalArrangement = Arrangement.SpaceBetween){
             items(weekList){ weekDay ->
                 Surface(modifier = Modifier.selectable(
@@ -116,7 +136,7 @@ fun WeekList(weekList:List<WeekDay>) {
                 }
             }
         }
-    Column(modifier = Modifier.padding(vertical = 25.dp)) {
+    Column(modifier = Modifier.padding(vertical = 20.dp)) {
         group?.let { DayScheduleModel(it,selectedOption.day) }?.let { DayBlackoutScreen(viewModel = it) }
     }
 
@@ -224,7 +244,10 @@ fun DayBlackoutScreen(
 
 @Composable
 fun DayScheduleList(blackouts: SnapshotStateList<blackoutModel>) {
-    LazyColumn(modifier = Modifier.padding(2.dp).fillMaxWidth().fillMaxHeight()){
+    LazyColumn(modifier = Modifier
+        .padding(2.dp)
+        .fillMaxWidth()
+        .fillMaxHeight()){
         items(blackouts){ blackout ->
             DayCard(blackout)
         }
@@ -255,10 +278,20 @@ fun DayCard(blackout:blackoutModel){
             }
             Column(verticalArrangement = Arrangement.SpaceBetween) {
                 Text(text = "Duration",style = MaterialTheme.typography.body1)
-                blackout.duration?.let { Text(text = it.toString(),style = MaterialTheme.typography.h5) }
+                Row(verticalAlignment = Alignment.Bottom) {
+                    blackout.duration?.let { Text(text = "${it.toString()}",style = MaterialTheme.typography.h5) }
+                    Text(text="hours",style = MaterialTheme.typography.subtitle1,modifier = Modifier.padding(horizontal = 5.dp))
+                }
+
             }
 
         }
     }
 }
 
+
+fun getWeekRange(year:Int,week_no: Int): Pair<DateTime?, DateTime?>? {
+    val startOfWeek = DateTime().withYear(year).withWeekOfWeekyear(week_no).withDayOfWeek(1)
+    val endOfWeek = startOfWeek.plusDays(6)
+    return Pair(startOfWeek, endOfWeek)
+}

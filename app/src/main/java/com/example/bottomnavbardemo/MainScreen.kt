@@ -1,15 +1,24 @@
 package com.example.bottomnavbardemo
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.focusModifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.bottomnavbardemo.ui.theme.Gray500
+import com.example.bottomnavbardemo.ui.theme.Gray700
+import com.example.bottomnavbardemo.ui.theme.Red
 
 @Composable
 fun MainScreen() {
@@ -32,7 +41,7 @@ fun BottomBar(navController: NavHostController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
-    BottomNavigation {
+    BottomNavigation(elevation = 6.dp) {
         screens.forEach { screen ->
             AddItem(
                 screen = screen,
@@ -56,7 +65,10 @@ fun RowScope.AddItem(
         icon = {
             Icon(
                 imageVector = screen.icon,
-                contentDescription = "Navigation Icon"
+                contentDescription = "Navigation Icon",
+                tint = getColor( currentDestination?.hierarchy?.any {
+                    it.route == screen.route
+                } == true)
             )
         },
         selected = currentDestination?.hierarchy?.any {
@@ -70,6 +82,14 @@ fun RowScope.AddItem(
             }
         }
     )
+}
+
+fun getColor(selected:Boolean):Color{
+    if(selected){
+        return Red
+    }else{
+        return Color.Gray
+    }
 }
 
 
