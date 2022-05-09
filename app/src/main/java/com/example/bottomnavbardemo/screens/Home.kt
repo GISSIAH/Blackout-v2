@@ -67,7 +67,7 @@ fun getToken(){
         val group =  getGroupName(context)
 
         if (group != null) {
-            Column(modifier = Modifier.padding(vertical = 50.dp)){
+            Column(modifier = Modifier.padding(vertical = 20.dp)){
                 val textPaddingModifier  = Modifier.padding(5.dp)
                 Text(text = getGreeting(),
                     modifier = textPaddingModifier,

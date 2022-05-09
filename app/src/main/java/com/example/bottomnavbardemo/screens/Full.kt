@@ -57,7 +57,7 @@ fun FullScreen() {
     val high_date = "${week_range.get(6)?.dayOfMonth} ${DateFormatSymbols().getMonths()[week_range.get(6)?.monthOfYear?.minus(1)!!]}"
     Column(
         modifier = Modifier
-            .padding(horizontal = 2.dp, vertical = 25.dp)
+            .padding(horizontal = 2.dp, vertical = 20.dp)
 
     ) {
         Row(modifier = Modifier
