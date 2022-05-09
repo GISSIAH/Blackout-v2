@@ -12,7 +12,7 @@
         android:theme="@style/Theme.BottomNavBarDemo">
         <activity android:name=".screens.Welcome"
             android:exported="true"
-            android:label="Welcome"
+            android:label="loadshedding"
             android:theme="@style/Theme.BottomNavBarDemo.NoActionBar"
             >
             <intent-filter>
@@ -34,6 +34,14 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAZQDwPwiZawhwA9JKzHQhFsCF0ZNkuEXc" />
+
+        <service
+            android:name=".MyFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

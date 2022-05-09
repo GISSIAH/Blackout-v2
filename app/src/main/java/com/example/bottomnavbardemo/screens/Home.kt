@@ -1,7 +1,10 @@
 package com.example.bottomnavbardemo.screens
 
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.preference.PreferenceManager
+import android.provider.Settings.Global.getString
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
@@ -10,10 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
@@ -26,12 +26,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.bottomnavbardemo.R
 import com.example.bottomnavbardemo.api.ServiceBuilder
 import com.example.bottomnavbardemo.models.blackoutModel
 import com.example.bottomnavbardemo.ui.theme.Red
 import com.example.bottomnavbardemo.ui.theme.ShimmerColorShades
 import com.example.bottomnavbardemo.ui.theme.lightRed
 import com.example.loadshedding.models.DayGroupSchedule
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.messaging.ktx.messaging
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -39,7 +44,9 @@ import retrofit2.Response
 import java.time.LocalTime
 import java.util.*
 
+fun getToken(){
 
+}
 @Composable
     fun HomeScreen() {
         Box(
@@ -69,7 +76,7 @@ import java.util.*
 
                 Row(modifier = Modifier
                     .fillMaxWidth(5f)
-                    .padding(horizontal = 5.dp,vertical = 20.dp)) {
+                    .padding(horizontal = 5.dp, vertical = 20.dp)) {
                     Card(
                         modifier = Modifier
                             .padding(horizontal = 5.dp, vertical = 5.dp)
@@ -81,7 +88,9 @@ import java.util.*
                     ) {
                         Column(modifier = Modifier.background(Red)) {
                             Text(text = "Today",
-                                modifier = Modifier.padding(horizontal = 8.dp).background(Red),
+                                modifier = Modifier
+                                    .padding(horizontal = 8.dp)
+                                    .background(Red),
                                 style =  MaterialTheme.typography.h3, color = Color.White
                             )
                             BlackoutListScreen(viewModel = BlackoutModel(group))
@@ -101,7 +110,9 @@ import java.util.*
                     ){
                         Column(modifier = Modifier.background(lightRed)) {
                             Text(text = "Tomorrow",
-                                modifier = Modifier.padding(horizontal = 8.dp).background(lightRed),
+                                modifier = Modifier
+                                    .padding(horizontal = 8.dp)
+                                    .background(lightRed),
                                 style =  MaterialTheme.typography.h3, color = Color.Black
                             )
                             TomorrowBlackoutListScreen(viewModel = TomorrowBlackoutModel(group,context))

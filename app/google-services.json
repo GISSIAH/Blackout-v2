@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1094251180898",
+    "project_id": "loadshedding-346911",
+    "storage_bucket": "loadshedding-346911.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1094251180898:android:7bd2ef467395768fdaf23b",
+        "android_client_info": {
+          "package_name": "com.example.loadshedding"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1094251180898-lrqr5oqtharmo16odvemncpis8kjg6ir.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDEk2nLULlvyqrdXLefajBT5gL9d5psRm0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1094251180898-lrqr5oqtharmo16odvemncpis8kjg6ir.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

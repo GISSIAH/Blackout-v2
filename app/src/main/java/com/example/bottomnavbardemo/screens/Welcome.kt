@@ -1,12 +1,14 @@
 package com.example.bottomnavbardemo.screens
 
 import android.Manifest
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
 import android.preference.PreferenceManager
+import android.util.Log
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.Toast
@@ -33,6 +35,8 @@ import com.example.bottomnavbardemo.ui.theme.Green
 import com.example.loadshedding.models.userLocationGroup
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.ktx.messaging
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -47,6 +51,7 @@ class Welcome : ComponentActivity() {
             if(getGroupSet(context) != ""){
                 val intent = Intent(this@Welcome, MainActivity::class.java)
                 startActivity(intent)
+                finish()
             }
 
             BottomNavBarDemoTheme {
@@ -56,7 +61,7 @@ class Welcome : ComponentActivity() {
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.h3
                     )
-/*
+
                     Row(modifier = Modifier
                         .fillMaxSize()
                         .padding(100.dp),verticalAlignment = Alignment.Bottom,horizontalArrangement = Arrangement.Center) {
@@ -77,7 +82,7 @@ class Welcome : ComponentActivity() {
                     }
 
 
- */
+ /*
                     Button(onClick = {
                         //setUserPreferences(context)
                         val intent = Intent(this@Welcome, MainActivity::class.java)
@@ -91,7 +96,7 @@ class Welcome : ComponentActivity() {
                         Text(text = "Skip")
                     }
 
-
+*/
 
 
                 }
@@ -160,6 +165,15 @@ fun setUserPreferences(context:Context){
 
                             editor.putString("group", response.body()?.group)
                             editor.putString("area",response.body()?.area)
+                            Firebase.messaging.subscribeToTopic("group${response.body()?.group?.uppercase()}")
+                                .addOnCompleteListener { task ->
+                                    var msg = "subscribed to group c"
+                                    if (!task.isSuccessful) {
+                                        msg = "didnt subscribe"
+                                    }
+                                    Log.d(ContentValues.TAG, msg)
+                                    Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+                                }
 
                             //spinner.visibility= View.GONE
 
