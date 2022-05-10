@@ -2,6 +2,7 @@ package com.example.bottomnavbardemo.screens
 
 import android.content.ContentValues.TAG
 import android.content.Context
+import android.content.Intent
 import android.preference.PreferenceManager
 import android.provider.Settings.Global.getString
 import android.util.Log
@@ -14,21 +15,30 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
+import com.example.bottomnavbardemo.MainActivity
 import com.example.bottomnavbardemo.R
 import com.example.bottomnavbardemo.api.ServiceBuilder
 import com.example.bottomnavbardemo.models.blackoutModel
+import com.example.bottomnavbardemo.navigation.AllScreens
+import com.example.bottomnavbardemo.ui.theme.Gray900
 import com.example.bottomnavbardemo.ui.theme.Red
 import com.example.bottomnavbardemo.ui.theme.ShimmerColorShades
 import com.example.bottomnavbardemo.ui.theme.lightRed
@@ -48,31 +58,44 @@ fun getToken(){
 
 }
 @Composable
-    fun HomeScreen() {
+    fun HomeScreen(
+    navController: NavController
+
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            TopSection()
+            TopSection(navController)
         }
     }
     @Composable
     @Preview
     fun HomeScreenPreview() {
-        TopSection()
+
     }
     @Composable
-    fun TopSection(){
+    fun TopSection(navController: NavController){
         val context = LocalContext.current
         val group =  getGroupName(context)
 
         if (group != null) {
-            Column(modifier = Modifier.padding(vertical = 20.dp)){
+            Column(modifier = Modifier.padding(vertical = 15.dp).fillMaxWidth()){
                 val textPaddingModifier  = Modifier.padding(5.dp)
-                Text(text = getGreeting(),
-                    modifier = textPaddingModifier,
-                    style= MaterialTheme.typography.h1
-                )
+                Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.SpaceBetween,verticalAlignment = Alignment.CenterVertically) {
+                    Text(text = getGreeting(),
+                        modifier = textPaddingModifier,
+                        style= MaterialTheme.typography.h1
+                    )
+                    IconButton(
+                        modifier=Modifier.alpha(ContentAlpha.medium).padding(horizontal = 20.dp),
+                        onClick = {
+                            navController.navigate(route = AllScreens.Notifications.route)
+                        }) {
+                        Icon(modifier = Modifier.size(30.dp),imageVector = Icons.Outlined.Notifications,contentDescription = "Notification Icon",tint= Gray900)
+                    }
+                }
+
 
                 Row(modifier = Modifier
                     .fillMaxWidth(5f)
@@ -234,7 +257,6 @@ class TomorrowBlackoutModel(group:String,context:Context) : ViewModel() {
             .launch {
                 val calendar: Calendar = Calendar.getInstance()
                 val day: Int = calendar.get(Calendar.DAY_OF_WEEK)-1
-                Toast.makeText(context, day.toString() , Toast.LENGTH_SHORT).show()
                 val requestCall : Call<DayGroupSchedule>? = ServiceBuilder.api.getDayGroupSchedule(day,group.uppercase())
                 if (requestCall != null) {
                     requestCall.enqueue(object: Callback<DayGroupSchedule> {
@@ -244,7 +266,6 @@ class TomorrowBlackoutModel(group:String,context:Context) : ViewModel() {
                         ) {
 
                             val blackoutTime = response.body()?.time
-                            Toast.makeText(context, response.body().toString() , Toast.LENGTH_SHORT).show()
                             if (blackoutTime != null) {
                                 blackoutCards.clear()
                                 blackoutCards.addAll(blackoutTime.times)
@@ -264,15 +285,15 @@ fun getGreeting():String{
     val now: LocalTime = LocalTime.now()
 
     if(now.hour in 6..12){
-        return "Good Morning"
+        return "Good morning"
     }
     else if(now.hour in 12..18){
-        return "Good Afternoon"
+        return "Good afternoon"
     }
     else if(now.hour in 18..23){
-        return "Good Evening"
+        return "Good evening"
     }
-    return "Welcome Back"
+    return "Welcome back"
 }
 fun getGroupName(context: Context): String? {
     val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)

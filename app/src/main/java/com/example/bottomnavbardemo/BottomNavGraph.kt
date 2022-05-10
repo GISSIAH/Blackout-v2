@@ -4,11 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.bottomnavbardemo.screens.FullScreen
-import com.example.bottomnavbardemo.screens.HomeScreen
-
-import com.example.bottomnavbardemo.screens.MapScreen
-import com.example.bottomnavbardemo.screens.SettingsScreen
+import com.example.bottomnavbardemo.navigation.AllScreens
+import com.example.bottomnavbardemo.screens.*
 
 @Composable
 fun BottomNavGraph(navController: NavHostController) {
@@ -17,7 +14,7 @@ fun BottomNavGraph(navController: NavHostController) {
         startDestination = BottomBarScreen.Home.route
     ) {
         composable(route = BottomBarScreen.Home.route) {
-            HomeScreen()
+            HomeScreen(navController)
         }
         composable(route = BottomBarScreen.Full.route) {
             FullScreen()
@@ -28,5 +25,9 @@ fun BottomNavGraph(navController: NavHostController) {
         composable(route = BottomBarScreen.Settings.route) {
             SettingsScreen()
         }
+        composable(route = AllScreens.Notifications.route) {
+            NotificationScreen(navController)
+        }
+
     }
 }
