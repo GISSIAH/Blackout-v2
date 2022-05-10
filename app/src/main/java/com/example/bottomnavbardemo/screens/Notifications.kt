@@ -1,6 +1,7 @@
 package com.example.bottomnavbardemo.screens
 
 
+import android.preference.PreferenceManager
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -24,6 +25,8 @@ import com.example.bottomnavbardemo.ui.theme.Gray900
 @Composable
 fun NotificationScreen(navController: NavController){
     val context = LocalContext.current
+    val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+    val editor = sharedPreferences.edit()
     Box(modifier = Modifier.fillMaxSize()) {
         Column() {
             Row(modifier = Modifier
@@ -36,6 +39,8 @@ fun NotificationScreen(navController: NavController){
                                 .alpha(ContentAlpha.medium)
                             ,
                             onClick = {
+                                editor.putBoolean("badgeState",false)
+                                editor.commit()
                                 navController.popBackStack()
 
                             }) {

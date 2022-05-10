@@ -1,11 +1,8 @@
 package com.example.bottomnavbardemo.screens
 
-import android.content.ContentValues.TAG
+
 import android.content.Context
-import android.content.Intent
 import android.preference.PreferenceManager
-import android.provider.Settings.Global.getString
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
@@ -17,7 +14,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Notifications
-import androidx.compose.material.icons.outlined.Search
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
@@ -29,12 +25,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
-import com.example.bottomnavbardemo.MainActivity
-import com.example.bottomnavbardemo.R
 import com.example.bottomnavbardemo.api.ServiceBuilder
 import com.example.bottomnavbardemo.models.blackoutModel
 import com.example.bottomnavbardemo.navigation.AllScreens
@@ -43,10 +36,6 @@ import com.example.bottomnavbardemo.ui.theme.Red
 import com.example.bottomnavbardemo.ui.theme.ShimmerColorShades
 import com.example.bottomnavbardemo.ui.theme.lightRed
 import com.example.loadshedding.models.DayGroupSchedule
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.messaging.FirebaseMessaging
-import com.google.firebase.messaging.ktx.messaging
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -54,9 +43,7 @@ import retrofit2.Response
 import java.time.LocalTime
 import java.util.*
 
-fun getToken(){
 
-}
 @Composable
     fun HomeScreen(
     navController: NavController
@@ -92,7 +79,18 @@ fun getToken(){
                         onClick = {
                             navController.navigate(route = AllScreens.Notifications.route)
                         }) {
-                        Icon(modifier = Modifier.size(30.dp),imageVector = Icons.Outlined.Notifications,contentDescription = "Notification Icon",tint= Gray900)
+                        val badgeState = getBadgeState(context)
+                        if(badgeState){
+                            BadgedBox(badge = { Badge { Text("1+") } }) {
+                                Icon(modifier = Modifier.size(30.dp),imageVector = Icons.Outlined.Notifications,contentDescription = "Notification Icon",tint= Gray900)
+                            }
+                        }else{
+
+                                Icon(modifier = Modifier.size(30.dp),imageVector = Icons.Outlined.Notifications,contentDescription = "Notification Icon",tint= Gray900)
+
+                        }
+
+
                     }
                 }
 
@@ -159,7 +157,10 @@ fun getToken(){
             BlackoutList(viewModel.blackoutCards,Color.White)
         }
     }
-
+    fun getBadgeState(context: Context):Boolean{
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+        return sharedPreferences.getBoolean("badgeState",true)
+    }
     @Composable
     fun TomorrowBlackoutListScreen(
     // pass the view model in this form for convenient testing
@@ -173,10 +174,6 @@ fun getToken(){
         BlackoutList(viewModel.blackoutCards, Color.Black)
     }
 }
-
-
-
-
     @Composable
     fun BlackoutList(blackouts: SnapshotStateList<blackoutModel>,textColor:Color) {
         LazyColumn(modifier = Modifier.padding(2.dp)){
