@@ -1,7 +1,6 @@
 package com.example.bottomnavbardemo.screens
 
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -17,7 +16,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
-import androidx.room.Room
 import com.example.bottomnavbardemo.database.AppDatabase
 import com.example.bottomnavbardemo.models.notification
 import com.example.bottomnavbardemo.ui.theme.Gray900
