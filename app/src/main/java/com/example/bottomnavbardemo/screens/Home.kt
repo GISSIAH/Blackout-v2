@@ -55,7 +55,7 @@ import java.util.*
         ) {
             Column {
                 TopSection(navController)
-                MiddleSection()
+                //MiddleSection()
             }
 
         }
@@ -104,14 +104,14 @@ import java.util.*
                 }
 
 
-                Row(modifier = Modifier
-                    .fillMaxWidth(5f)
+                Column(modifier = Modifier
+                    .fillMaxWidth()
                     .padding(horizontal = 5.dp, vertical = 20.dp)) {
                     Card(
                         modifier = Modifier
                             .padding(horizontal = 5.dp, vertical = 5.dp)
-                            .height(120.dp)
-                            .weight(2f)
+                            .height(200.dp)
+                            .fillMaxWidth()
                         ,
                         elevation = 8.dp,
                         shape = RoundedCornerShape(corner = CornerSize(16.dp))
@@ -129,10 +129,9 @@ import java.util.*
                     }
                     Card(
                         modifier = Modifier
-                            .padding(horizontal = 5.dp, vertical = 5.dp)
-                            .height(120.dp)
-                            .weight(2f)
-
+                            .padding(horizontal = 5.dp, vertical = 35.dp)
+                            .height(200.dp)
+                            .fillMaxWidth()
                         ,
                         elevation = 4.dp,
                         backgroundColor = Color.White,
@@ -229,7 +228,7 @@ import java.util.*
 
         //Toast.makeText(context, day.toString(), Toast.LENGTH_SHORT).show()
         // A surface container using the 'background' color from the theme
-        Surface(color = Red) {
+        Surface(modifier = Modifier.padding(vertical = 10.dp),color = Red) {
             BlackoutList(viewModel.blackoutCards,Color.White)
         }
     }
@@ -268,19 +267,31 @@ import java.util.*
         ) {
             Row(modifier = Modifier.fillMaxSize(),horizontalArrangement = Arrangement.SpaceAround,verticalAlignment = Alignment.CenterVertically) {
                     Row(horizontalArrangement = Arrangement.SpaceAround,verticalAlignment = Alignment.CenterVertically) {
-                        blackout.from?.let { Text(text = it, modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp) ,style =  MaterialTheme.typography.h5, color = textColor) }
+                        blackout.from?.let { Text(text = it, modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp) ,style =  MaterialTheme.typography.h1, color = textColor) }
+                        val timeAlias = blackout.from?.substring(0,1)?.let { getTimeAlias(it.toInt())}
+                        //Text(text=  timeAlias.toString(),style=MaterialTheme.typography.h6)
                     }
 
                     Text(text = "to",style =  MaterialTheme.typography.h5, color = textColor)
 
                     Row(horizontalArrangement = Arrangement.SpaceAround,verticalAlignment = Alignment.CenterVertically) {
-                        blackout.to?.let { Text(text = it, modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp) ,style =  MaterialTheme.typography.h5, color = textColor) }
+                        blackout.to?.let { Text(text = it, modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp) ,style =  MaterialTheme.typography.h1, color = textColor) }
                     }
 
             }
         }
 
     }
+
+fun getTimeAlias(time:Int):String{
+    if(time<12){
+        return "AM"
+    }
+    else{
+        "PM"
+    }
+    return ""
+}
 
 class BlackoutModel(group:String) : ViewModel() {
         val blackoutCards = mutableStateListOf<blackoutModel>()
