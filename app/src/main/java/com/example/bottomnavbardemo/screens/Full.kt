@@ -31,10 +31,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.bottomnavbardemo.api.ServiceBuilder
 import com.example.bottomnavbardemo.models.WeekDay
 import com.example.bottomnavbardemo.models.blackoutModel
-import com.example.bottomnavbardemo.ui.theme.Gray500
-import com.example.bottomnavbardemo.ui.theme.Gray700
-import com.example.bottomnavbardemo.ui.theme.Red
-import com.example.bottomnavbardemo.ui.theme.lightRed
+import com.example.bottomnavbardemo.ui.theme.*
 import com.example.loadshedding.models.DayGroupSchedule
 import kotlinx.coroutines.launch
 import retrofit2.Call
@@ -75,7 +72,7 @@ fun FullScreen() {
                 .fillMaxWidth()
                 .padding(vertical = 10.dp),horizontalArrangement = Arrangement.Center) {
                 if (week_range != null) {
-                    Text(text = "${low_date} to ${high_date}",style = MaterialTheme.typography.h5,color = MaterialTheme.colors.primary )
+                    Text(text = "${low_date} to ${high_date}",style = MaterialTheme.typography.h5)
                 }
             }
 
@@ -310,18 +307,18 @@ fun DayCard(blackout:blackoutModel){
     ) {
         Row(modifier = Modifier.padding(horizontal = 5.dp).fillMaxSize().background(Red),horizontalArrangement = Arrangement.SpaceAround,verticalAlignment = Alignment.CenterVertically) {
             Column(verticalArrangement = Arrangement.SpaceBetween) {
-                Text(text = "From",style = MaterialTheme.typography.body1)
-                blackout.from?.let { Text(text = it,style = MaterialTheme.typography.h5) }
+                Text(text = "From",style = MaterialTheme.typography.body1,color=varWhite)
+                blackout.from?.let { Text(text = it,style = MaterialTheme.typography.h5,color=varWhite) }
             }
             Column(verticalArrangement = Arrangement.SpaceBetween) {
-                Text(text = "To",style = MaterialTheme.typography.body1)
-                blackout.to?.let { Text(text = it,style = MaterialTheme.typography.h5) }
+                Text(text = "To",style = MaterialTheme.typography.body1,color=varWhite)
+                blackout.to?.let { Text(text = it,style = MaterialTheme.typography.h5,color=varWhite) }
             }
             Column(verticalArrangement = Arrangement.SpaceBetween) {
-                Text(text = "Duration",style = MaterialTheme.typography.body1)
+                Text(text = "Duration",style = MaterialTheme.typography.body1,color=varWhite)
                 Row(verticalAlignment = Alignment.Bottom) {
-                    blackout.duration?.let { Text(text = "${it.toString()}",style = MaterialTheme.typography.h5) }
-                    Text(text="hours",style = MaterialTheme.typography.subtitle1,modifier = Modifier.padding(horizontal = 5.dp))
+                    blackout.duration?.let { Text(text = "${it.toString()}",style = MaterialTheme.typography.h5,color=varWhite) }
+                    Text(text="hours",style = MaterialTheme.typography.subtitle1,modifier = Modifier.padding(horizontal = 5.dp),color=varWhite)
                 }
 
             }

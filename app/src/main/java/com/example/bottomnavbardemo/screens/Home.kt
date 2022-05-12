@@ -91,11 +91,11 @@ import java.util.*
                         val badgeState = getBadgeState(context)
                         if(badgeState){
                             BadgedBox(badge = { Badge { Text("1+") } }) {
-                                Icon(modifier = Modifier.size(30.dp),imageVector = Icons.Outlined.Notifications,contentDescription = "Notification Icon",tint= MaterialTheme.colors.onPrimary)
+                                Icon(modifier = Modifier.size(30.dp),imageVector = Icons.Outlined.Notifications,contentDescription = "Notification Icon",tint= MaterialTheme.colors.primaryVariant)
                             }
                         }else{
 
-                                Icon(modifier = Modifier.size(30.dp),imageVector = Icons.Outlined.Notifications,contentDescription = "Notification Icon",tint= MaterialTheme.colors.onPrimary)
+                                Icon(modifier = Modifier.size(30.dp),imageVector = Icons.Outlined.Notifications,contentDescription = "Notification Icon",tint= MaterialTheme.colors.primaryVariant)
 
                         }
 
@@ -109,7 +109,7 @@ import java.util.*
                     .padding(horizontal = 5.dp, vertical = 20.dp)) {
                     Card(
                         modifier = Modifier
-                            .padding(horizontal = 5.dp, vertical = 5.dp)
+                            .padding(horizontal = 5.dp, vertical = 15.dp)
                             .height(200.dp)
                             .fillMaxWidth()
                         ,
@@ -129,7 +129,7 @@ import java.util.*
                     }
                     Card(
                         modifier = Modifier
-                            .padding(horizontal = 5.dp, vertical = 35.dp)
+                            .padding(horizontal = 5.dp, vertical = 45.dp)
                             .height(200.dp)
                             .fillMaxWidth()
                         ,

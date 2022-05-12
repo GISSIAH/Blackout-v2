@@ -16,9 +16,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.bottomnavbardemo.ui.theme.Gray500
-import com.example.bottomnavbardemo.ui.theme.Gray700
-import com.example.bottomnavbardemo.ui.theme.Red
+import com.example.bottomnavbardemo.ui.theme.*
 
 @Composable
 fun MainScreen() {
@@ -41,7 +39,7 @@ fun BottomBar(navController: NavHostController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
-    BottomNavigation(elevation = 6.dp) {
+    BottomNavigation(elevation = 6.dp,backgroundColor = MaterialTheme.colors.secondary) {
         screens.forEach { screen ->
             AddItem(
                 screen = screen,
@@ -60,7 +58,7 @@ fun RowScope.AddItem(
 ) {
     BottomNavigationItem(
         label = {
-            Text(text = screen.title,color=MaterialTheme.colors.primary)
+            Text(text = screen.title,color = varWhite)
         },
         icon = {
             Icon(
@@ -86,9 +84,9 @@ fun RowScope.AddItem(
 
 fun getColor(selected:Boolean):Color{
     if(selected){
-        return Red
+        return varRed
     }else{
-        return Color.Gray
+        return varWhite
     }
 }
 
