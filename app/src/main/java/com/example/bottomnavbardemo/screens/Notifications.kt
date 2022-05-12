@@ -46,7 +46,7 @@ fun NotificationScreen(navController: NavController){
                             }) {
                             Icon(modifier = Modifier
                                 .size(25.dp)
-                                ,imageVector = Icons.Outlined.ArrowBack,contentDescription = "back Icon",tint= Gray900)
+                                ,imageVector = Icons.Outlined.ArrowBack,contentDescription = "back Icon",tint= MaterialTheme.colors.onPrimary)
                         }
                     }
 

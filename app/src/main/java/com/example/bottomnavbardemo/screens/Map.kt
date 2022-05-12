@@ -93,7 +93,7 @@ fun SearchBar(
         .fillMaxWidth()
         .height(56.dp),
         elevation = AppBarDefaults.TopAppBarElevation,
-        color = Color.White
+        //color = Color.White
     ) {
         TextField(modifier = Modifier.fillMaxWidth()
             ,value=text,
@@ -200,14 +200,11 @@ fun AreaBlackoutScreen(
     // A surface container using the 'background' color from the theme
     if(viewModel.blackoutCards.isEmpty()){
         Row(modifier = Modifier.fillMaxSize(),horizontalArrangement = Arrangement.Center,verticalAlignment = Alignment.CenterVertically) {
-            Text(text = "No search results found.", color = Gray700, style = MaterialTheme.typography.h5)
+            Text(text = "No search results found.", style = MaterialTheme.typography.h5)
         }
 
     }else{
-        Surface() {
-
             AreaScheduleList(viewModel.blackoutCards)
-        }
     }
 
 }

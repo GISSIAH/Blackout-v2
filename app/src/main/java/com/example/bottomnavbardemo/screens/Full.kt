@@ -43,6 +43,7 @@ import retrofit2.Response
 import java.util.*
 import org.joda.time.DateTime
 import java.text.DateFormatSymbols
+import kotlin.properties.Delegates
 
 
 @Composable
@@ -55,37 +56,48 @@ fun FullScreen() {
     val low_date = "${week_range.get(0)?.dayOfMonth} ${DateFormatSymbols().getMonths()[week_range?.get(0)?.monthOfYear?.minus(1)!!]}"
 
     val high_date = "${week_range.get(6)?.dayOfMonth} ${DateFormatSymbols().getMonths()[week_range.get(6)?.monthOfYear?.minus(1)!!]}"
-    Column(
+    Box(
         modifier = Modifier
-            .padding(horizontal = 2.dp, vertical = 20.dp)
-
+            .fillMaxSize()
     ) {
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 10.dp),horizontalArrangement = Arrangement.Center) {
-            Text(text = "This week",style = MaterialTheme.typography.h2)
-        }
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 10.dp),horizontalArrangement = Arrangement.Center) {
-            if (week_range != null) {
-                Text(text = "${low_date} to ${high_date}",style = MaterialTheme.typography.h5,color = Gray700)
+        Column(
+            modifier = Modifier
+                .padding(horizontal = 2.dp, vertical = 20.dp)
+
+
+        ) {
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 10.dp),horizontalArrangement = Arrangement.Center) {
+                Text(text = "This week",style = MaterialTheme.typography.h2)
             }
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 10.dp),horizontalArrangement = Arrangement.Center) {
+                if (week_range != null) {
+                    Text(text = "${low_date} to ${high_date}",style = MaterialTheme.typography.h5,color = MaterialTheme.colors.primary )
+                }
+            }
+
+            WeekListScreen()
+
+
+
         }
-
-        WeekListScreen()
-
-
-
     }
+
+
+
 }
 @Composable
 @Preview
 fun FullScreenPreview() {
-    Column {
-        Text(text = "This week",style = MaterialTheme.typography.h2)
-        WeekListScreen()
-    }
+
+        Column {
+            Text(text = "This week", style = MaterialTheme.typography.h2)
+            WeekListScreen()
+        }
+
 }
 
 
@@ -107,11 +119,9 @@ fun WeekListScreen() {
         WeekDay(6,"Sun",week_range.get(6)?.dayOfMonth),
     )
 
-    Surface() {
-        WeekList(weekList)
-    }
-}
+    WeekList(weekList)
 
+}
 
 
 
@@ -119,7 +129,7 @@ fun WeekListScreen() {
 fun WeekList(weekList:List<WeekDay>) {
 
     val context = LocalContext.current
-    val group = getGroupName(context)
+    val group = "C"//getGroupName(context)
     val calendar: Calendar = Calendar.getInstance()
     val day: Int = calendar.get(Calendar.DAY_OF_WEEK)-2
     val option1 = WeekDay(day,getDayName(day),calendar.get(Calendar.DAY_OF_MONTH))
@@ -129,7 +139,7 @@ fun WeekList(weekList:List<WeekDay>) {
             .padding(horizontal = 8.dp, vertical = 10.dp)
             .fillMaxWidth(),horizontalArrangement = Arrangement.SpaceBetween){
             items(weekList){ weekDay ->
-                Surface(modifier = Modifier.selectable(
+                Box(modifier = Modifier.selectable(
                     selected = true,
                     onClick = {
                         selectedOption = weekDay
@@ -144,12 +154,37 @@ fun WeekList(weekList:List<WeekDay>) {
             }
         }
     Column(modifier = Modifier.padding(vertical = 20.dp)) {
-        group?.let { DayScheduleModel(it,selectedOption.day) }?.let { DayBlackoutScreen(viewModel = it) }
+        group?.let { DayScheduleModel(it,selectedOption.day) }?.let { DayBlackoutScreen(viewModel = it,selDate = selectedOption.day) }
     }
 
 
     }
 
+}
+
+fun getDayAlias(selectedDay:Int):String{
+    val calendar: Calendar = Calendar.getInstance()
+    val day: Int = calendar.get(Calendar.DAY_OF_WEEK)-2
+    val dayDiff = selectedDay - day
+    if (  dayDiff >=0 ){
+        if(dayDiff==0){
+            return "Today"
+        }
+        if(dayDiff == 1){
+            return "Tomorrow"
+        }
+        else{
+            return "In $dayDiff Days"
+        }
+
+    }else{
+        if(dayDiff == -1){
+            return "Yesterday"
+        }
+        else{
+            return "${Math.abs(dayDiff)} Days Ago"
+        }
+    }
 }
 
 @Composable
@@ -164,7 +199,7 @@ fun WeekDayCard(weekDay:WeekDay,selected:Boolean) {
 
         ) {
             if(selected){
-                Text(text = weekDay.dayName,style = MaterialTheme.typography.h6,color = Gray500)
+                Text(text = weekDay.dayName,style = MaterialTheme.typography.h6)
                 Text(text = weekDay.date.toString(),style = MaterialTheme.typography.h5,color = Red,fontWeight = FontWeight.Bold)
             }else{
                 Text(text = weekDay.dayName,style = MaterialTheme.typography.h6)
@@ -229,22 +264,23 @@ class DayScheduleModel(group:String,day:Int) : ViewModel() {
 @Composable
 fun DayBlackoutScreen(
     // pass the view model in this form for convenient testing
-    viewModel: DayScheduleModel
+    viewModel: DayScheduleModel,
+    selDate:Int
 ) {
     val context = LocalContext.current
 
     //Toast.makeText(context, day.toString(), Toast.LENGTH_SHORT).show()
     // A surface container using the 'background' color from the theme
-    Surface() {
-        DayScheduleList(viewModel.blackoutCards)
-    }
+    DayScheduleList(viewModel.blackoutCards,selDate)
+
 }
 
 
 
 
 @Composable
-fun DayScheduleList(blackouts: SnapshotStateList<blackoutModel>) {
+fun DayScheduleList(blackouts: SnapshotStateList<blackoutModel>,selDate:Int) {
+    Text(modifier = Modifier.padding(horizontal = 5.dp),text= getDayAlias(selDate),style = MaterialTheme.typography.h3)
     LazyColumn(modifier = Modifier
         .padding(2.dp)
         .fillMaxWidth()
@@ -264,11 +300,15 @@ fun DayCard(blackout:blackoutModel){
             .fillMaxWidth()
             .height(100.dp)
 
+
+
         ,
+
         elevation = 8.dp,
-        shape = RoundedCornerShape(corner = CornerSize(4.dp))
+        shape = RoundedCornerShape(corner = CornerSize(4.dp)),
+        backgroundColor = Red
     ) {
-        Row(modifier = Modifier.padding(horizontal = 5.dp),horizontalArrangement = Arrangement.SpaceAround,verticalAlignment = Alignment.CenterVertically) {
+        Row(modifier = Modifier.padding(horizontal = 5.dp).fillMaxSize().background(Red),horizontalArrangement = Arrangement.SpaceAround,verticalAlignment = Alignment.CenterVertically) {
             Column(verticalArrangement = Arrangement.SpaceBetween) {
                 Text(text = "From",style = MaterialTheme.typography.body1)
                 blackout.from?.let { Text(text = it,style = MaterialTheme.typography.h5) }

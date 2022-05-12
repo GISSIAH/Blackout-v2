@@ -53,7 +53,11 @@ import java.util.*
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            TopSection(navController)
+            Column {
+                TopSection(navController)
+                MiddleSection()
+            }
+
         }
     }
     @Composable
@@ -64,29 +68,34 @@ import java.util.*
     @Composable
     fun TopSection(navController: NavController){
         val context = LocalContext.current
-        val group =  getGroupName(context)
+        val group =  "C"//getGroupName(context)
 
         if (group != null) {
-            Column(modifier = Modifier.padding(vertical = 15.dp).fillMaxWidth()){
+            Column(modifier = Modifier
+                .padding(vertical = 15.dp)
+                .fillMaxWidth()){
                 val textPaddingModifier  = Modifier.padding(5.dp)
                 Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.SpaceBetween,verticalAlignment = Alignment.CenterVertically) {
                     Text(text = getGreeting(),
                         modifier = textPaddingModifier,
-                        style= MaterialTheme.typography.h1
+                        style= MaterialTheme.typography.h2,
+
                     )
                     IconButton(
-                        modifier=Modifier.alpha(ContentAlpha.medium).padding(horizontal = 20.dp),
+                        modifier= Modifier
+                            .alpha(ContentAlpha.medium)
+                            .padding(horizontal = 20.dp),
                         onClick = {
                             navController.navigate(route = AllScreens.Notifications.route)
                         }) {
                         val badgeState = getBadgeState(context)
                         if(badgeState){
                             BadgedBox(badge = { Badge { Text("1+") } }) {
-                                Icon(modifier = Modifier.size(30.dp),imageVector = Icons.Outlined.Notifications,contentDescription = "Notification Icon",tint= Gray900)
+                                Icon(modifier = Modifier.size(30.dp),imageVector = Icons.Outlined.Notifications,contentDescription = "Notification Icon",tint= MaterialTheme.colors.onPrimary)
                             }
                         }else{
 
-                                Icon(modifier = Modifier.size(30.dp),imageVector = Icons.Outlined.Notifications,contentDescription = "Notification Icon",tint= Gray900)
+                                Icon(modifier = Modifier.size(30.dp),imageVector = Icons.Outlined.Notifications,contentDescription = "Notification Icon",tint= MaterialTheme.colors.onPrimary)
 
                         }
 
@@ -139,10 +148,77 @@ import java.util.*
                             TomorrowBlackoutListScreen(viewModel = TomorrowBlackoutModel(group,context))
                         }
                     }
+
+
                 }
             }
         }
     }
+
+    @Composable
+    fun MiddleSection(){
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Text(modifier = Modifier.padding(horizontal = 10.dp),text = "Summary",style = MaterialTheme.typography.h2)
+            Row(modifier = Modifier
+                .fillMaxWidth(4f)
+                .padding(horizontal = 5.dp)) {
+                Card(
+                    modifier = Modifier
+                        .padding(horizontal = 5.dp, vertical = 5.dp)
+                        .height(150.dp)
+                        .weight(2f)
+                    ,
+                    elevation = 4.dp,
+                    backgroundColor = Red,
+                    shape = RoundedCornerShape(corner = CornerSize(16.dp))
+                ){Column(){
+                    Text(text = "Big")
+                }}
+                Column(modifier = Modifier
+                    .padding(horizontal = 5.dp, vertical = 5.dp)
+                    .height(150.dp)
+                    .weight(2f)
+                    ) {
+                    Row(modifier = Modifier
+                        .fillMaxWidth(2f)
+                        .padding(horizontal = 5.dp)) {
+                        Card(
+                            modifier = Modifier
+                                .padding(horizontal = 5.dp)
+                                .height(75.dp)
+                                .weight(2f)
+                            ,
+                            elevation = 4.dp,
+                            backgroundColor = Red,
+                            shape = RoundedCornerShape(corner = CornerSize(16.dp))
+                        ){Column() {
+                            Text(text = "small")
+                        }}
+                    }
+                    Row(modifier = Modifier
+                        .fillMaxWidth(2f)
+                        .padding(horizontal = 5.dp)) {
+                        Card(
+                            modifier = Modifier
+                                .padding(horizontal = 5.dp, vertical = 5.dp)
+                                .height(75.dp)
+                                .weight(2f)
+                            ,
+                            elevation = 4.dp,
+                            backgroundColor = Red,
+                            shape = RoundedCornerShape(corner = CornerSize(16.dp))
+                        ){Column() {
+                            Text(text = "small")
+                        }}
+                    }
+
+                }
+            }
+        }
+        
+
+    }
+
 
     @Composable
     fun BlackoutListScreen(

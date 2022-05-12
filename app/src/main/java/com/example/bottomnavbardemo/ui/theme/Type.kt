@@ -27,26 +27,22 @@ val Typography = Typography(
     h3 = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
-        fontSize = 22.sp,
-        color = Gray500
+        fontSize = 20.sp,
 ),
     h4 = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Light,
         fontSize = 22.sp,
-        color = Gray700
     ),
     h1 = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.SemiBold,
         fontSize = 36.sp,
-        color = Gray500
     ),
     h2 = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.SemiBold,
         fontSize = 24.sp,
-        color = Gray700
     )
 
     /* Other default text styles to override

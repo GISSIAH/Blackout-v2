@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.bottomnavbardemo.ui.theme.Gray500
+import com.example.bottomnavbardemo.ui.theme.Gray700
 import com.example.bottomnavbardemo.ui.theme.Green
 import com.example.bottomnavbardemo.ui.theme.Red
 import com.google.firebase.ktx.Firebase
@@ -53,6 +54,7 @@ fun SettingsScreenPreview() {
 
 @Composable
 fun LocationGroup(){
+    val context = LocalContext.current
     Column(modifier = Modifier
         .fillMaxWidth()
         .padding(horizontal = 10.dp, vertical = 20.dp)) {
@@ -60,14 +62,14 @@ fun LocationGroup(){
         Row(modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 10.dp),horizontalArrangement = Arrangement.SpaceBetween) {
-            Text(text = "Current Area",style = MaterialTheme.typography.h4)
-            Text(modifier = Modifier.padding(horizontal = 50.dp),text="Area 25c",style=MaterialTheme.typography.h4)
+            Text(text = "Current Area",style = MaterialTheme.typography.h4,)
+            Text(modifier = Modifier.padding(horizontal = 50.dp),text="${getArea(context)}",style=MaterialTheme.typography.h4,)
         }
         Row(modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 5.dp),horizontalArrangement = Arrangement.SpaceBetween) {
             Text(text = "Current Group",style = MaterialTheme.typography.h4)
-            Text(modifier = Modifier.padding(horizontal = 55.dp),text="Group C",style=MaterialTheme.typography.h4)
+            Text(modifier = Modifier.padding(horizontal = 55.dp),text="Group ${getGroupName(context)?.uppercase()}",style=MaterialTheme.typography.h4,)
         }
         Row(modifier = Modifier
             .fillMaxWidth()
@@ -75,13 +77,18 @@ fun LocationGroup(){
             Button(colors = ButtonDefaults.buttonColors(
                 backgroundColor = Red,
                 contentColor = White
-            ),onClick = { /*TODO*/ }) {
+            ),onClick = { setUserPreferences(context)}) {
                 Text(text = "Reset Location")
             }
         }
 
 
     }
+}
+
+fun getArea(context:Context): String? {
+    val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+    return sharedPreferences.getString("area", "")
 }
 
 
@@ -102,7 +109,7 @@ fun NotificationGroup(){
         .padding(horizontal = 10.dp, vertical = 5.dp)) {
         Text(text = "Group Notifications",style = MaterialTheme.typography.h3)
         Row(modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp),horizontalArrangement = Arrangement.SpaceBetween,verticalAlignment = Alignment.Bottom) {
-            Text(modifier = Modifier.padding(vertical = 2.dp),text="Receive updates about your schedule group.", style=MaterialTheme.typography.body1,color = Gray500)
+            Text(modifier = Modifier.padding(vertical = 2.dp),text="Receive updates about your schedule group.", style=MaterialTheme.typography.body1,)
             Box(modifier = Modifier.padding(horizontal = 10.dp)) {
                 Switch(colors =SwitchDefaults.colors(
                     checkedThumbColor = Green,

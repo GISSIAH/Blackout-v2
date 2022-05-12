@@ -58,7 +58,7 @@ class Welcome : ComponentActivity() {
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.h3
                     )
-
+/*
                     Row(modifier = Modifier
                         .fillMaxSize()
                         .padding(100.dp),verticalAlignment = Alignment.Bottom,horizontalArrangement = Arrangement.Center) {
@@ -78,8 +78,7 @@ class Welcome : ComponentActivity() {
                         }
                     }
 
-
- /*
+*/
                     Button(onClick = {
                         //setUserPreferences(context)
                         val intent = Intent(this@Welcome, MainActivity::class.java)
@@ -93,7 +92,7 @@ class Welcome : ComponentActivity() {
                         Text(text = "Skip")
                     }
 
-*/
+
 
 
                 }
@@ -164,7 +163,7 @@ fun setUserPreferences(context:Context){
                             editor.putString("area",response.body()?.area)
                             Firebase.messaging.subscribeToTopic("group${response.body()?.group?.uppercase()}")
                                 .addOnCompleteListener { task ->
-                                    var msg = "subscribed to group c"
+                                    var msg = "subscribed to group"
                                     if (!task.isSuccessful) {
                                         msg = "didnt subscribe"
                                     }

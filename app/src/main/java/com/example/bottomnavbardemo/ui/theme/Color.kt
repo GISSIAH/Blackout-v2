@@ -13,6 +13,7 @@ val Gray500 = Color(0xFF303030)
 val Gray700 = Color(0xFF2B2B2B)
 val Gray800 = Color(0xFF1F1F1F)
 val Gray900 = Color(0xFF1B1C1E)
+var backgroundWhite = Color(0xFFE6E6E6)
 
 val ShimmerColorShades = listOf(
 
