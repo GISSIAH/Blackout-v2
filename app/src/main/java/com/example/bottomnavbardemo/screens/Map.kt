@@ -69,8 +69,10 @@ fun TopBar(searchViewModel:SearchViewModel){
                              searchViewModel.updateSearchTextState("")
             },
             onSearchClicked = {
-                Toast.makeText(context, "Searched $it", Toast.LENGTH_SHORT).show()
-                Log.d("Search clicked",it)
+
+                //Log.d("Search clicked",it)
+
+
             }
 
         )
@@ -198,6 +200,7 @@ fun AreaBlackoutScreen(
 
     //Toast.makeText(context, day.toString(), Toast.LENGTH_SHORT).show()
     // A surface container using the 'background' color from the theme
+    //Toast.makeText(context, "${viewModel.blackoutCards.}", Toast.LENGTH_SHORT).show()
     if(viewModel.blackoutCards.isEmpty()){
         Row(modifier = Modifier.fillMaxSize(),horizontalArrangement = Arrangement.Center,verticalAlignment = Alignment.CenterVertically) {
             Text(text = "No search results found.", style = MaterialTheme.typography.h5)
@@ -214,12 +217,16 @@ fun AreaBlackoutScreen(
 
 @Composable
 fun AreaScheduleList(blackouts: SnapshotStateList<blackoutModel>) {
-    LazyColumn(modifier = Modifier
-        .padding(2.dp)
-        .fillMaxWidth()
-        .fillMaxHeight()){
-        items(blackouts){ blackout ->
-            DayCard(blackout)
+    Column{
+        Text(text="Today",modifier = Modifier.padding(horizontal = 5.dp),style = MaterialTheme.typography.h3)
+        LazyColumn(modifier = Modifier
+            .padding(2.dp)
+            .fillMaxWidth()
+            .fillMaxHeight()){
+            items(blackouts){ blackout ->
+                DayCard(blackout)
+            }
         }
     }
+
 }

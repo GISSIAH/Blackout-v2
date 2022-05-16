@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Loadshedding</string>
     <string name="title_activity_welcome">Welcome</string>
+    <string name="title_activity_splash_screen">SplashScreen</string>
 </resources>

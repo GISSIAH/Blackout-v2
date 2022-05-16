@@ -44,13 +44,15 @@ class Welcome : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+
             context = LocalContext.current
+            /*
             if(getGroupSet(context) != ""){
                 val intent = Intent(this@Welcome, MainActivity::class.java)
                 startActivity(intent)
                 finish()
             }
-
+*/
             BottomNavBarDemoTheme {
                 Column(modifier = Modifier.fillMaxSize(),horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(text = "Stay on top of blackouts",
@@ -83,6 +85,7 @@ class Welcome : ComponentActivity() {
                         //setUserPreferences(context)
                         val intent = Intent(this@Welcome, MainActivity::class.java)
                         startActivity(intent)
+                        finish()
                     },
                         colors = ButtonDefaults.buttonColors(
                             backgroundColor = Green,
