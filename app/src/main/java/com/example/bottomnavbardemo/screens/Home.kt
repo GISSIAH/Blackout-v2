@@ -68,7 +68,8 @@ import java.util.*
     @Composable
     fun TopSection(navController: NavController){
         val context = LocalContext.current
-        val group =  "C"//getGroupName(context)
+
+        val group =  getGroupName(context)
 
         if (group != null) {
             Column(modifier = Modifier

@@ -126,7 +126,7 @@ fun WeekListScreen() {
 fun WeekList(weekList:List<WeekDay>) {
 
     val context = LocalContext.current
-    val group = "C"//getGroupName(context)
+    val group = getGroupName(context)
     val calendar: Calendar = Calendar.getInstance()
     val day: Int = calendar.get(Calendar.DAY_OF_WEEK)-2
     val option1 = WeekDay(day,getDayName(day),calendar.get(Calendar.DAY_OF_MONTH))

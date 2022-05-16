@@ -9,20 +9,16 @@ import android.location.Location
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.util.Log
-import android.view.View
-import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import com.example.bottomnavbardemo.MainActivity
@@ -37,22 +33,35 @@ import com.google.firebase.messaging.ktx.messaging
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import com.google.android.gms.common.ConnectionResult
+
+import com.google.android.gms.common.GoogleApiAvailability
+
+import android.app.Activity
+import androidx.compose.foundation.clickable
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
+import com.example.bottomnavbardemo.models.menuOption
+
 
 class Welcome : ComponentActivity() {
     lateinit var context :Context
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
+        val options = listOf<menuOption>(menuOption("Group A","A"),menuOption("Group B","B"),
+            menuOption("Group C","C") )
 
+        setContent {
+            var expanded by remember { mutableStateOf(false) }
+            var selectedOption by remember { mutableStateOf(menuOption("","")) }
             context = LocalContext.current
-            /*
-            if(getGroupSet(context) != ""){
-                val intent = Intent(this@Welcome, MainActivity::class.java)
-                startActivity(intent)
-                finish()
-            }
-*/
             BottomNavBarDemoTheme {
                 Column(modifier = Modifier.fillMaxSize(),horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(text = "Stay on top of blackouts",
@@ -60,37 +69,106 @@ class Welcome : ComponentActivity() {
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.h3
                     )
-/*
+
                     Row(modifier = Modifier
                         .fillMaxSize()
                         .padding(100.dp),verticalAlignment = Alignment.Bottom,horizontalArrangement = Arrangement.Center) {
-                        Button(onClick = {
-                            setUserPreferences(context)
-                            if(getGroupSet(context) != ""){
-                                val intent = Intent(this@Welcome, MainActivity::class.java)
-                                startActivity(intent)
+                        if(isGooglePlayServicesAvailable(this@Welcome)){
+                            Button(onClick = {
+                                setUserPreferences(context)
+                                if(getGroupSet(context) != ""){
+                                    val intent = Intent(this@Welcome, MainActivity::class.java)
+                                    startActivity(intent)
+                                }
+                            },
+                                colors = ButtonDefaults.buttonColors(
+                                    backgroundColor = Green,
+                                    contentColor = White
+                                ),)
+                            {
+                                Text(text = "Set Location")
                             }
-                                         },
-                            colors = ButtonDefaults.buttonColors(
-                                backgroundColor = Green,
-                                contentColor = White
-                            ),)
-                             {
-                            Text(text = "Set Location")
+                        }else{
+                            AlertDialog(
+                                onDismissRequest = { },
+                                confirmButton = {
+                                    TextButton(onClick = {
+                                        Toast.makeText(context, "Selected ${selectedOption.value}", Toast.LENGTH_SHORT).show()
+                                        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context /* Activity context */)
+                                        val editor = sharedPreferences.edit()
+                                        editor.putString("GroupSet", "true")
+                                        editor.putString("group", selectedOption.value)
+                                        editor.commit()
+                                        val intent = Intent(this@Welcome, MainActivity::class.java)
+                                        startActivity(intent)
+                                        finish()
+                                    })
+                                    { Text(text = "OK") }
+                                },
+                                dismissButton = {
+                                    TextButton(onClick = {})
+                                    { Text(text = "Cancel") }
+                                },
+                                title = { Text(text = "Select Group") },
+                                text = {
+                                    Column(){
+                                        OutlinedTextField(
+                                            value = selectedOption.label,
+                                            onValueChange = {  },
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .onGloballyPositioned { coordinates ->
+                                                    // This value is used to assign to
+                                                    // the DropDown the same width
+                                                    //mTextFieldSize = coordinates.size.toSize()
+                                                },
+                                            label = {Text("---")},
+                                            trailingIcon = {
+                                                Icon(
+                                                    Icons.Filled.ArrowDropDown,"contentDescription",
+                                                    Modifier.clickable { expanded = !expanded })
+                                            }
+                                        )
+                                        DropdownMenu(
+                                            expanded = expanded,
+                                            onDismissRequest = { expanded = false },
+                                            modifier = Modifier.width(150.dp),
+
+                                            //modifier = Modifier.width(with(LocalDensity.current){textfieldSize.width.toDp()})
+                                        ) {
+                                            options.forEach { option ->
+                                                DropdownMenuItem(onClick = {
+                                                    selectedOption = option
+                                                    expanded = false
+                                                }) {
+                                                    Text(text = option.label)
+                                                }
+                                            }
+                                        }
+                                    }
+
+
+
+                                }
+                            )
+
+
                         }
                     }
 
-*/
-                    Button(onClick = {
-                        //setUserPreferences(context)
-                        val intent = Intent(this@Welcome, MainActivity::class.java)
-                        startActivity(intent)
-                        finish()
-                    },
+
+                    Button(
+                        onClick = {
+                            //setUserPreferences(context)
+                            val intent = Intent(this@Welcome, MainActivity::class.java)
+                            startActivity(intent)
+                            finish()
+                        },
                         colors = ButtonDefaults.buttonColors(
                             backgroundColor = Green,
                             contentColor = White
-                        ),)
+                        ),
+                    )
                     {
                         Text(text = "Skip")
                     }
@@ -106,14 +184,6 @@ class Welcome : ComponentActivity() {
 }
 
 
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    BottomNavBarDemoTheme {
-
-    }
-}
 
 fun setUserPreferences(context:Context){
     //Toast.makeText(context, "Button clicked", Toast.LENGTH_SHORT).show()
@@ -178,6 +248,7 @@ fun setUserPreferences(context:Context){
 
                             Toast.makeText(context, response.body()?.group, Toast.LENGTH_SHORT).show()
                             editor.commit()
+
                         }
 
                     }
@@ -199,5 +270,20 @@ fun setUserPreferences(context:Context){
 fun getGroupSet(context: Context): String? {
     val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context /* Activity context */)
     return sharedPreferences.getString("GroupSet", "")
+}
+
+
+
+
+fun isGooglePlayServicesAvailable(activity: Activity?): Boolean {
+    val googleApiAvailability = GoogleApiAvailability.getInstance()
+    val status = googleApiAvailability.isGooglePlayServicesAvailable(activity!!)
+    if (status != ConnectionResult.SUCCESS) {
+        if (googleApiAvailability.isUserResolvableError(status)) {
+            //googleApiAvailability.getErrorDialog(activity, status, 2404)!!.show()
+        }
+        return false
+    }
+    return true
 }
 
