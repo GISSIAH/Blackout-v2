@@ -47,8 +47,8 @@ import kotlin.properties.Delegates
 fun FullScreen() {
     val cal = Calendar.getInstance()
     val year = cal.get(Calendar.YEAR)
-    val week_no = cal.get(Calendar.WEEK_OF_YEAR)-1
-
+    //val week_no = cal.get(Calendar.WEEK_OF_YEAR)-1
+    val week_no =  DateTime.now().weekOfWeekyear
     val week_range = getWeekRange(year,week_no)
     val low_date = "${week_range.get(0)?.dayOfMonth} ${DateFormatSymbols().getMonths()[week_range?.get(0)?.monthOfYear?.minus(1)!!]}"
 
@@ -103,8 +103,9 @@ fun FullScreenPreview() {
 fun WeekListScreen() {
     val cal = Calendar.getInstance()
     val year = cal.get(Calendar.YEAR)
-    val week_no = cal.get(Calendar.WEEK_OF_YEAR)-1
 
+    //val week_no = cal.get(Calendar.WEEK_OF_YEAR)-1
+    val week_no =  DateTime.now().weekOfWeekyear
     val week_range = getWeekRange(year,week_no)
     val weekList = listOf<WeekDay>(
         WeekDay(0,"Mon",week_range.get(0)?.dayOfMonth),
