@@ -11,7 +11,7 @@ object ServiceBuilder {
 
     private val retrofit by lazy {
         Retrofit.Builder()
-            .baseUrl("https://blackout-api.onrender.com/")
+            .baseUrl("https://blackout-check-api.herokuapp.com/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
