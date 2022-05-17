@@ -55,6 +55,8 @@ class Welcome : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        ActivityCompat.requestPermissions(this@Welcome,
+            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION), 1)
         val options = listOf<menuOption>(menuOption("Group A","A"),menuOption("Group B","B"),
             menuOption("Group C","C") )
 
@@ -64,7 +66,7 @@ class Welcome : ComponentActivity() {
             context = LocalContext.current
             BottomNavBarDemoTheme {
                 Column(modifier = Modifier.fillMaxSize(),horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(text = "Stay on top of blackouts",
+                    Text(text = "Some Random Title",
                         modifier =  Modifier.padding(15.dp),
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.h3
@@ -89,6 +91,7 @@ class Welcome : ComponentActivity() {
                                 Text(text = "Set Location")
                             }
                         }else{
+
                             AlertDialog(
                                 onDismissRequest = { },
                                 confirmButton = {
@@ -155,24 +158,6 @@ class Welcome : ComponentActivity() {
 
                         }
                     }
-
-
-                    Button(
-                        onClick = {
-                            //setUserPreferences(context)
-                            val intent = Intent(this@Welcome, MainActivity::class.java)
-                            startActivity(intent)
-                            finish()
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            backgroundColor = Green,
-                            contentColor = White
-                        ),
-                    )
-                    {
-                        Text(text = "Skip")
-                    }
-
 
 
 

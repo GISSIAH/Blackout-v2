@@ -89,7 +89,9 @@ dependencies {
     // For example, declare the dependencies for Firebase Authentication and Cloud Firestore
     implementation 'com.google.firebase:firebase-auth'
     implementation 'com.google.firebase:firebase-firestore'
-
+    implementation "com.google.accompanist:accompanist-appcompat-theme:0.16.0"
+    implementation "com.google.accompanist:accompanist-placeholder:0.16.0"
+    implementation "com.google.accompanist:accompanist-placeholder-material:0.16.0"
 
     implementation("androidx.room:room-runtime:2.4.0")
     kapt "androidx.room:room-compiler:2.4.0"

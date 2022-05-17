@@ -25,6 +25,7 @@ class SplashScreen : ComponentActivity() {
 
         setContent {
             context = LocalContext.current
+
             if(getGroupSet(context) != ""){
                 val intent = Intent(this@SplashScreen, MainActivity::class.java)
                 startActivity(intent)
@@ -34,7 +35,11 @@ class SplashScreen : ComponentActivity() {
                 val intent = Intent(this@SplashScreen, Welcome::class.java)
                 startActivity(intent)
                 finish()
+
             }
+
+
+
             BottomNavBarDemoTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier=Modifier.fillMaxSize(),color = varBlue) {
